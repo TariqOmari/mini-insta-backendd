@@ -1,11 +1,16 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
+
+
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authroutes"); // Importing auth routes
 const postRoutes = require("./routes/postsRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 
+
 const likeRoutes = require("./routes/likeRoutes");
+
 
 
 
@@ -18,7 +23,7 @@ dotenv.config();
 
 const app = express();
 
-
+app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
