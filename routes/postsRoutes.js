@@ -5,7 +5,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
   createPost,
   getUserPosts,
-  getUserPostsWithDetails,
+  getAllPostsWithUserDetails,
   deletePost,
   updatePost,
 } = require("../controller/postController");
@@ -24,7 +24,7 @@ router.post("/", authMiddleware, upload.single("media"), createPost);
 router.get("/me", authMiddleware, getUserPosts);
 
 // ✅ Get own posts with user info
-router.get("/me/details", authMiddleware, getUserPostsWithDetails);
+router.get("/", authMiddleware, getAllPostsWithUserDetails);
 
 // ✅ Update post
 router.put("/:id", authMiddleware, upload.single("media"), updatePost);

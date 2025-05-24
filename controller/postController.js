@@ -37,22 +37,21 @@ const getUserPosts = async (req, res) => {
   }
 };
 
-const getUserPostsWithDetails = async (req, res) => {
-  try {
-    const userId = req.user.id;
 
-    const posts = await Post.find({ userId, deletedAt: null })
-      .sort({ createdAt: -1 })
-      .populate({
-        path: "userId",
-        select: "username email profilePic status", // Select fields to return
-      });
+
+const getAllPostsWithUserDetails = async (req, res) => {
+  try {
+    const posts = await Post.find({ deletedAt: null })
+      .populate("userId", "username email status profilePhoto")
+      .sort({ createdAt: -1 });
 
     res.status(200).json(posts);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
   }
 };
+
 
 
 const deletePost = async (req, res) => {
@@ -112,4 +111,4 @@ const updatePost = async (req, res) => {
 
 
 
-module.exports = { createPost, getUserPosts, getUserPostsWithDetails, deletePost, updatePost };
+module.exports = { createPost, getUserPosts, getAllPostsWithUserDetails, deletePost, updatePost };
