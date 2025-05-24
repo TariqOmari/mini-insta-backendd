@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { registerUser, loginUser } = require("../controller/authController");
+const { registerUser, loginUser, getAllUsers } = require("../controller/authController");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -10,6 +10,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+router.get("/users", getAllUsers);
 router.post("/signup", upload.single("profilePhoto"), registerUser);
 router.post("/login", loginUser);
 

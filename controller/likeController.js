@@ -21,4 +21,24 @@ const toggleLike = async (req, res) => {
   }
 };
 
-module.exports = { toggleLike };
+const getAllLikes = async (req, res) => {
+  try {
+    const likes = await Like.find()
+      .populate({
+        path: "userId",
+        select: "username email profilePic status",
+      })
+      .populate({
+        path: "postId",
+        select: "_id caption",
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(likes);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+module.exports = { toggleLike, getAllLikes };
