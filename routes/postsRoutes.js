@@ -8,6 +8,7 @@ const {
   getAllPostsWithUserDetails,
   deletePost,
   updatePost,
+  searchPostsByCaption
 } = require("../controller/postController");
 
 const storage = multer.diskStorage({
@@ -26,10 +27,11 @@ router.get("/me", authMiddleware, getUserPosts);
 // ✅ Get own posts with user info
 router.get("/", authMiddleware, getAllPostsWithUserDetails);
 
+
 // ✅ Update post
 router.put("/:id", authMiddleware, upload.single("media"), updatePost);
-
 // ✅ Delete post
 router.delete("/:id", authMiddleware, deletePost);
 
+router.get("/search", authMiddleware, searchPostsByCaption);
 module.exports = router;

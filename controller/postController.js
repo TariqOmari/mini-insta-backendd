@@ -41,17 +41,29 @@ const getUserPosts = async (req, res) => {
 
 const getAllPostsWithUserDetails = async (req, res) => {
   try {
-    const posts = await Post.find({ deletedAt: null })
-      .populate("userId", "username email status profilePhoto")
-      .sort({ createdAt: -1 });
+    const { page = 1, limit = 5 } = req.query;
 
-    res.status(200).json(posts);
+    const query = { deletedAt: null };
+
+    const posts = await Post.find(query)
+      .populate("userId", "username email status profilePhoto")
+      .sort({ createdAt: -1 })
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit));
+
+    const total = await Post.countDocuments(query);
+
+    res.status(200).json({
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / limit),
+      posts,
+    });
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ message: "Failed to fetch posts" });
   }
 };
-
 
 
 const deletePost = async (req, res) => {
@@ -109,6 +121,33 @@ const updatePost = async (req, res) => {
 };
 
 
+const searchPostsByCaption = async (req, res) => {
+  try {
+    const { search = "" } = req.query;
+
+    if (!search) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const query = {
+      deletedAt: null,
+      caption: { $regex: search, $options: "i" }, // case-insensitive search
+    };
+
+    const posts = await Post.find(query)
+      .populate("userId", "username email status profilePhoto")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ total: posts.length, posts });
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    res.status(500).json({ message: "Failed to search posts" });
+  }
+};
 
 
-module.exports = { createPost, getUserPosts, getAllPostsWithUserDetails, deletePost, updatePost };
+
+
+
+
+module.exports = { createPost, getUserPosts, getAllPostsWithUserDetails, deletePost, updatePost, searchPostsByCaption };
